@@ -1,54 +1,70 @@
-'use client'
+"use client";
 import { SyntheticEvent, useCallback, useRef, useState } from "react";
 import styles from "./style.module.css";
 import axios from "axios";
 import { Toast } from "@/componentes/Toast";
 import { Loading } from "@/componentes/Loading";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
 
-    const refForm = useRef<any>()
-    const [toast, setToast] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const router = useRouter()
 
-    const submitForm = useCallback((e: SyntheticEvent)=>{
+    const refForm = useRef<any>();
+    const [toast, setToast] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const submitForm = useCallback((e: SyntheticEvent) => {
         e.preventDefault();
 
-        if(refForm.current.checkValidity()){
-           const target = e.target as typeof e.target & {
-            email:{value: string},
-            senha: {value: string},
-           }     
+        if (refForm.current.checkValidity()) {
+            setLoading(true);
 
-           axios.post('/api/login',{
-            email: target.email.value,
-            senha: target.senha.value,
-        })
-        .then(()=>{
+            const target = e.target as typeof e.target & {
+                email: { value: string };
+                senha: { value: string };
+            };
 
-        })
-        .catch((err)=>{
-            console.log(err)
-            setToast(true)
-        })
+            axios
+                .post("/api/login", {
+                    email: target.email.value,
+                    senha: target.senha.value,
+                })
+                .then((res) => {
+                    console.log(res.data)
 
-        }else{
-            refForm.current.classList.add('was-validated')
+                    //SPA - React
+                    // LocalStorage -> Navegador
+                    // SessionStorage -> Navegador - X
+
+                    // Nextjs - SSR - Servidor
+                    // Requisição -> Headers
+                    // Cookies -> Navegador
+                    
+                    router.push('/dashboard')
+                    setLoading(false)
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setLoading(false)
+                    setToast(true);
+                });
+        } else {
+            refForm.current.classList.add("was-validated");
         }
+    }, []);
 
-    },[])
-    
     return (
         <>
-        <Toast
-        show={toast}
-        message="Dados Inválidos"
-        colors="danger"
-        onClose={()=>{setToast(false)}}
-        />
-        <Loading
-        loading={loading}
-        />
+            <Loading loading={loading} />
+            <Toast
+                show={toast}
+                message="Dados Inválidos"
+                colors="danger"
+                onClose={() => {
+                    setToast(false);
+                }}
+            />
             <div className={styles.main}>
                 <div className={styles.border}>
                     <div className="d-flex flex-column align-items-center">
