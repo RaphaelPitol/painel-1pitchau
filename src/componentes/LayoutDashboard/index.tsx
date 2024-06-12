@@ -1,4 +1,12 @@
-export const LayoutDashboard = () => {
+import { validaPermissao } from "@/services/token";
+import { ReactNode } from "react";
+
+interface Iprops {
+    children: ReactNode
+    token: string | undefined
+}
+
+export const LayoutDashboard = (props: Iprops) => {
     return (
         <>
             <header className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
@@ -23,7 +31,7 @@ export const LayoutDashboard = () => {
                 <div className="w-100"></div>
                 <div className="navbar-nav">
                     <div className="nav-item text-nowrap">
-                        <a className="nav-link px-3" href="#">
+                        <a className="nav-link px-3" href="/login">
                             Sair
                         </a>
                     </div>
@@ -44,14 +52,43 @@ export const LayoutDashboard = () => {
                                         href={"/dashboard"}
                                     >
                                         <span data-feather="home"></span>
-                                        Dashboard
+                                        Categoria
+                                    </a>
+                                </li>
+
+                                {
+                                    validaPermissao(
+                                        props.token, 
+                                        ['admin']
+                                    ) &&
+                                <li className="nav-item">
+                                    <a
+                                        className={`nav-link`}
+                                        href={"/usuarios"}
+                                    >
+                                        <span data-feather="home"></span>
+                                        Usuários
+                                    </a>
+                                </li>
+
+                                }
+
+                                <li className="nav-item">
+                                    <a
+                                        className={`nav-link`}
+                                        href={"/dashboard"}
+                                    >
+                                        <span data-feather="home"></span>
+                                        Produtos
                                     </a>
                                 </li>
                             </ul>
                         </div>
                     </nav>
 
-                    <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4"></main>
+                    <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                        {props.children}
+                    </main>
                 </div>
             </div>
         </>

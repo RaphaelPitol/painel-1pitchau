@@ -5,6 +5,7 @@ import axios from "axios";
 import { Toast } from "@/componentes/Toast";
 import { Loading } from "@/componentes/Loading";
 import { useRouter } from "next/navigation";
+import {setCookie} from 'nookies'
 
 export default function Login() {
 
@@ -32,7 +33,6 @@ export default function Login() {
                 })
                 .then((res) => {
                     console.log(res.data)
-
                     //SPA - React
                     // LocalStorage -> Navegador
                     // SessionStorage -> Navegador - X
@@ -40,7 +40,14 @@ export default function Login() {
                     // Nextjs - SSR - Servidor
                     // Requisição -> Headers
                     // Cookies -> Navegador
-                    
+
+                    //gravando os dados no cookies do navegador
+                    setCookie(
+                        undefined,
+                        'painel1pitchau.token',
+                        res.data.token 
+                    )
+
                     router.push('/dashboard')
                     setLoading(false)
                 })
